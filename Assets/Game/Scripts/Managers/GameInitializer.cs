@@ -168,15 +168,19 @@ namespace WaveSurvival
                 gmObj.AddComponent<GameManager>();
             }
 
+            GameObject gmObj2 = new GameObject("PickupManager");
+            gmObj2.AddComponent<PickupManager>();
+
             GameObject waveObj = new GameObject("WaveManager");
             waveObj.AddComponent<EnemySpawner>();
-            waveObj.AddComponent<WaveManager>();
+            WaveManager wm = waveObj.AddComponent<WaveManager>();
 
-            CreateEnemyPrefab(waveObj.GetComponent<WaveManager>());
+            CreateEnemyPrefabs(wm);
         }
 
-        void CreateEnemyPrefab(WaveManager wm)
+        void CreateEnemyPrefabs(WaveManager wm)
         {
+            // Normal enemy
             GameObject enemyPrefab = new GameObject("EnemyPrefab");
             enemyPrefab.SetActive(false);
 
@@ -194,6 +198,27 @@ namespace WaveSurvival
             enemy.originalColor = Color.red;
 
             wm.enemyPrefab = enemyPrefab;
+
+            // Fast enemy
+            GameObject fastPrefab = new GameObject("FastEnemyPrefab");
+            fastPrefab.SetActive(false);
+
+            GameObject fastBody = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            fastBody.name = "Body";
+            fastBody.transform.SetParent(fastPrefab.transform);
+            fastBody.transform.localPosition = Vector3.up * 1f;
+            fastBody.transform.localScale = new Vector3(0.6f, 0.8f, 0.6f);
+            fastBody.GetComponent<Renderer>().material.color = Color.yellow;
+            fastBody.GetComponent<CapsuleCollider>().isTrigger = false;
+
+            Enemy fastEnemy = fastPrefab.AddComponent<Enemy>();
+            fastEnemy.enemyType = EnemyType.Fast;
+            fastEnemy.maxHealth = 30f;
+            fastEnemy.moveSpeed = 6f;
+            fastEnemy.bodyRenderer = fastBody.GetComponent<Renderer>();
+            fastEnemy.originalColor = Color.yellow;
+
+            wm.fastEnemyPrefab = fastPrefab;
         }
 
         void CreateUI()
