@@ -18,23 +18,21 @@ var is_dead := false
 var original_color := Color.RED
 
 func _ready():
-	health = max_health
 	match enemy_type:
 		Type.NORMAL:
 			original_color = Color.RED
 		Type.FAST:
 			original_color = Color.YELLOW
-			move_speed = 6.0
-			health = 30.0
-			max_health = 30.0
+			if max_health == 50.0:
+				max_health = 30.0
+				health = max_health
 			score_value = 15
 			scale = Vector3(0.7, 0.7, 0.7)
 		Type.BOSS:
 			original_color = Color(0.5, 0, 0.5)
-			move_speed = 3.0
-			health = 200.0
-			max_health = 200.0
-			damage = 40.0
+			if max_health == 50.0:
+				max_health = 200.0
+				health = max_health
 			score_value = 50
 			scale = Vector3(1.5, 1.5, 1.5)
 
@@ -117,7 +115,6 @@ func reset_color():
 
 func die():
 	is_dead = true
-	is_safe_to_delete = true
 
 	# Death particles
 	for i in range(5):
@@ -154,4 +151,4 @@ func die():
 
 	queue_free()
 
-var is_safe_to_delete := false
+

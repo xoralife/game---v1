@@ -65,11 +65,11 @@ func _physics_process(delta):
 		bob_timer += delta * 10
 		var bx = sin(bob_timer) * 0.02
 		var by = sin(bob_timer * 2) * 0.01
-		camera.position.x = 0.7 + bx
+		camera.position.x = bx
 		camera.position.y = 0.7 + by
 	else:
 		bob_timer = 0
-		camera.position.x = lerp(camera.position.x, 0.7, delta * 6)
+		camera.position.x = lerp(camera.position.x, 0.0, delta * 6)
 		camera.position.y = lerp(camera.position.y, 0.7, delta * 6)
 
 func take_damage(amount: float):
