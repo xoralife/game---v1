@@ -44,7 +44,7 @@ namespace WaveSurvival.Enemies
             ApplyTypeVisuals();
         }
 
-        void ApplyTypeVisuals()
+        public void ApplyTypeVisuals()
         {
             if (bodyRenderer == null) return;
 
