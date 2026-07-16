@@ -5,21 +5,24 @@ namespace WaveSurvival.Player
 {
     public class Gun : MonoBehaviour
     {
-        [Header="Shooting"]
-        public float fireRate = 0.1f;
+        [Header("Shooting")]
+        public float fireRate = 0.12f;
         public float damage = 30f;
         public float range = 100f;
         public LayerMask shootMask = -1;
 
-        [Header="Ammo"]
+        [Header("Ammo")]
         public int magazineSize = 30;
         public int currentAmmo;
         public int totalReserve = 90;
         public float reloadTime = 1.5f;
 
-        [Header="Effects"]
-        public GameObject muzzleFlashPrefab;
-        public GameObject hitEffectPrefab;
+        [Header("Recoil")]
+        public float recoilAmount = 0.05f;
+        public float recoilRecovery = 5f;
+
+        [Header("Effects")]
+        public GameObject muzzleFlashObj;
         public AudioClip shootSound;
         public AudioClip reloadSound;
 
@@ -28,10 +31,17 @@ namespace WaveSurvival.Player
         float nextFireTime;
         bool isReloading;
         float reloadTimer;
+        Vector3 originalPos;
+        Vector3 recoilOffset;
 
         public System.Action OnShoot;
         public System.Action OnReloadStart;
         public System.Action OnReloadEnd;
+
+        public int CurrentAmmo => currentAmmo;
+        public int TotalReserve => totalReserve;
+        public int MagazineSize => magazineSize;
+        public bool IsReloading => isReloading;
 
         void Start()
         {
@@ -40,6 +50,7 @@ namespace WaveSurvival.Player
             if (cam == null)
                 cam = Camera.main;
             audioSource = GetComponent<AudioSource>();
+            originalPos = transform.localPosition;
         }
 
         void Update()
@@ -60,6 +71,10 @@ namespace WaveSurvival.Player
 
             if (Input.GetKeyDown(KeyCode.R) && currentAmmo < magazineSize && totalReserve > 0)
                 StartReload();
+
+            // Recoil recovery
+            recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, Time.deltaTime * recoilRecovery);
+            transform.localPosition = originalPos + recoilOffset;
         }
 
         void Shoot()
@@ -67,8 +82,20 @@ namespace WaveSurvival.Player
             currentAmmo--;
             nextFireTime = Time.time + fireRate;
 
-            if (muzzleFlashPrefab != null)
-                Instantiate(muzzleFlashPrefab, transform.position, transform.rotation);
+            // Recoil animation
+            recoilOffset += new Vector3(
+                Random.Range(-0.005f, 0.005f),
+                -0.02f,
+                Random.Range(-0.01f, -0.005f)
+            );
+            recoilOffset = Vector3.ClampMagnitude(recoilOffset, 0.08f);
+
+            // Muzzle flash
+            if (muzzleFlashObj != null)
+            {
+                muzzleFlashObj.SetActive(true);
+                Invoke(nameof(HideMuzzleFlash), 0.04f);
+            }
 
             if (shootSound != null && audioSource != null)
                 audioSource.PlayOneShot(shootSound);
@@ -84,11 +111,22 @@ namespace WaveSurvival.Player
                         GameManager.Instance.AddScore(10);
                 }
 
-                if (hitEffectPrefab != null)
-                    Instantiate(hitEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+                // Simple hit effect (small sphere)
+                GameObject hitFX = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                hitFX.transform.position = hit.point;
+                hitFX.transform.localScale = Vector3.one * 0.04f;
+                hitFX.GetComponent<Renderer>().material.color = enemy != null ? Color.red : Color.gray;
+                Destroy(hitFX.GetComponent<SphereCollider>());
+                Destroy(hitFX, 0.3f);
             }
 
             OnShoot?.Invoke();
+        }
+
+        void HideMuzzleFlash()
+        {
+            if (muzzleFlashObj != null)
+                muzzleFlashObj.SetActive(false);
         }
 
         void StartReload()
