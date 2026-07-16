@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  productName: FPS Training Room
+  applicationIdentifier:
+    standalone: com.xoralife.fpstrainingroom
+  bundleVersion: 1.0.0
+--- !u!5 &2
+EditorSettings:
+  serializationMode: 2
+--- !u!5 &3
+GraphicsSettings:
+  tierSettings: []
+--- !u!5 &4
+InputSettings:
+  m_Definitions: []
+--- !u!5 &5
+AudioSettings:
+  m_DisableAudio: 0
+--- !u!5 &6
+TimeSettings:
+  m_FixedTimestampMode: 1
+--- !u!5 &7
+PhysicsSettings:
+  m_Gravity: {x: 0, y: -9.81, z: 0}
+  m_DefaultSolverIterations: 6
+  m_DefaultSolverVelocityIterations: 1
+--- !u!5 &8
+QualitySettings:
+  m_CurrentQuality: 5
+--- !u!5 &9
+TagManagerSettings:
+  m_Tags: []
+  m_Layers: []
