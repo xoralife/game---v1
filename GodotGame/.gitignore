@@ -1,0 +1,16 @@
+# Godot
+.godot/
+import/
+*.translation
+*.uid
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
